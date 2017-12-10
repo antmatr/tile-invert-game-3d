@@ -55,7 +55,7 @@ h2 {
     font-size: 50px;
     z-index: 0;
     opacity:0;
-    transition:opacity 0.5s ease-in-out;
+    transition:opacity 0.5s ease-in-out 0.25s;
 }
 
 
@@ -177,9 +177,26 @@ h2 {
 .controls {
     display:flex;
     flex-direction:row;
+    justify-content:space-evenly;
+    align-items:center;
+}
+
+.difficulty,
+.history-undo,
+.history-redo {
+    display:flex;
+    flex-direction:row;
     justify-content:center;
     align-items:center;
 }
+
+.history-undo .input {
+    border-radius:0 5px 5px 0;
+}
+.history-redo .input {
+    border-radius:5px 0 0 5px;
+}
+
 .btn {
     display:block;
     text-align:center;
@@ -214,6 +231,16 @@ h2 {
 
 .btn-increase {
     border-radius: 0 5px 5px 0;
+}
+
+.btn-undo {
+    border-radius: 5px 0 0 5px;
+    width:75px;
+}
+
+.btn-redo {
+    border-radius: 0 5px 5px 0;
+    width:75px;
 }
 
 
@@ -274,10 +301,6 @@ h2 {
   left:10px;
   z-index: -1;
   border-radius:50%;
- // background-color: rgba(33,255,255,1);
-  box-shadow: 0 0 15px 10px rgba(100,0,255,1);
-}
-#game-field-container:before, #game-field-container:after {
   box-shadow: 0 0 15px 10px rgba(164, 160, 178, 1);
 }
 #game-field-container:before {

@@ -15,6 +15,8 @@ const app = new Vue({
         baseCellState: 0,
         matrixSum: 0,
         matrixSumBackup: 0,
+        historyUndo: [],
+        historyRedo: [],
         win: false,
         startX: 0,
         startY: 0,
@@ -34,6 +36,8 @@ const app = new Vue({
             this.win = false;
             this.baseCellState = Math.round(Math.random());
             this.matrixSum = this.baseCellState * this.volume;
+            this.historyUndo = [];
+            this.historyRedo = [];
 
             for (let sideIndex = 0, s = this.sideCount; sideIndex < s; sideIndex++) {
                 let side = [];
@@ -64,20 +68,21 @@ const app = new Vue({
             }, 500);
 
         },
+        createBackup() {
+            this.matrixBackup = this.matrix.map((side) => side.map((row) => row.map((cell, cellIndex) => row[cellIndex])));
+            this.matrixSumBackup = this.matrixSum;
+        },
         increaseRank () {
             this.newRank = Math.min(this.maxRank, this.newRank + 1);
         },
         decreaseRank () {
             this.newRank = Math.max(this.minRank, this.newRank - 1);
         },
-        createBackup() {
-            this.matrixBackup = this.matrix.map((side) => side.map((row) => row.map((cell, cellIndex) => row[cellIndex])));
-            this.matrixSumBackup = this.matrixSum;
-        },
         reset () {
-            if (this.win === true) {
-                this.score -= this.volume * this.volume;    //TODO: отделить логику начисления очков
-                this.win = false;
+            this.historyUndo = [];
+            this.historyRedo = [];
+            if (this.win) {
+                this.undoWin();
             }
             for (let sideIndex = 0, s = this.sideCount; sideIndex < s; sideIndex++) {
                 for (let rowIndex = 0, r = this.rank; rowIndex < r; rowIndex++) {
@@ -98,13 +103,22 @@ const app = new Vue({
             }
         },
         checkWin () {
-            if ((this.matrixSum === this.volume || this.matrixSum === 0) && this.win !== true) {
-                this.score += this.volume * this.volume;
-                this.win = true;
+            if ((this.matrixSum === this.volume || this.matrixSum === 0) && !this.win) {
+                this.doWin();
             }
         },
+        doWin () {
+            this.score += this.volume * this.volume;
+            this.win = true;
+        },
+        undoWin () {
+            this.score -= this.volume * this.volume;
+            this.win = false;
+        },
         touch (coordinate) {
-            if (this.win !== true && this.pressed === true) {
+            if (!this.win && this.pressed) {
+                this.historyUndo.push(coordinate);
+                this.historyRedo = [];
                 this.changeState(coordinate);
                 this.checkWin();
             }
@@ -115,6 +129,24 @@ const app = new Vue({
             this.findNeighbors(coordinate).forEach((neighborCoordinate) => {
                 this.invert(neighborCoordinate);
             });
+        },
+        undo() {
+            if (this.historyUndo.length > 0) {
+                let coordinate = this.historyUndo.pop();
+                this.changeState(coordinate);
+                this.historyRedo.push(coordinate);
+                if (this.win) {
+                    this.undoWin();
+                }
+            }
+        },
+        redo() {
+            if (this.historyRedo.length > 0) {
+                let coordinate = this.historyRedo.pop();
+                this.changeState(coordinate);
+                this.historyUndo.push(coordinate);
+                this.checkWin();
+            }
         },
         findNeighbors(coordinate) {
             return [

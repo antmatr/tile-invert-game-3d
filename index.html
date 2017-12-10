@@ -11,7 +11,7 @@
     <div id="app" class="container">
         <h1>Score: {{score}}</h1>
         <div id="game-field-container"
-             v-bind:class="{'win': win === true, 'size-2': rank===2, 'size-3': rank===3, 'size-4': rank===4, 'size-5': rank===5 }">
+             v-bind:class="{'win': win, 'size-2': rank===2, 'size-3': rank===3, 'size-4': rank===4, 'size-5': rank===5 }">
             <div class="game-cube"
                  v-bind:style="{transform: cubeTransform}">
                 <div class="side"
@@ -29,19 +29,43 @@
             </div>
         </div>
         <div class="controls">
-            <button class="btn btn-decrease"
-                    v-on:click="decreaseRank()">
-                -
-            </button>
-            <input class="input input-level"
-                   type="text"
-                   name="rank"
-                   disabled
-                   v-bind:value="newRank" />
-            <button class="btn btn-increase"
-                    v-on:click="increaseRank()">
-                +
-            </button>
+            <div class="history-undo">
+                <button class="btn btn-undo"
+                        v-on:click="undo()">
+                    Undo
+                </button>
+                <input class="input input-level"
+                       type="text"
+                       name="history-undo"
+                       disabled
+                       v-bind:value="historyUndo.length" />
+            </div>
+            <div class="difficulty">
+                <button class="btn btn-decrease"
+                        v-on:click="decreaseRank()">
+                    -
+                </button>
+                <input class="input input-level"
+                       type="text"
+                       name="rank"
+                       disabled
+                       v-bind:value="newRank" />
+                <button class="btn btn-increase"
+                        v-on:click="increaseRank()">
+                    +
+                </button>
+            </div>
+            <div class="history-redo">
+                <input class="input input-level"
+                       type="text"
+                       name="history-redo"
+                       disabled
+                       v-bind:value="historyRedo.length" />
+                <button class="btn btn-redo"
+                        v-on:click="redo()">
+                    Redo
+                </button>
+            </div>
         </div>
         <button class="btn btn-action"
                 v-on:click="generate()">

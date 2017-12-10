@@ -9,72 +9,25 @@
 </head>
 <body>
     <div id="app" class="container">
-        <h1>Tile Invert Game</h1>
-        <h2>Score: {{score}}</h2>
+        <h1>Score: {{score}}</h1>
         <div id="game-field-container"
-             v-bind:class="{'win': status === 1, 'size-2': rank===2, 'size-3': rank===3, 'size-4': rank===4, 'size-5': rank===5 }">
-            <div class="game-cube" 
+             v-bind:class="{'win': win === true, 'size-2': rank===2, 'size-3': rank===3, 'size-4': rank===4, 'size-5': rank===5 }">
+            <div class="game-cube"
                  v-bind:style="{transform: cubeTransform}">
-                <div class="side side-1">
-                    <div class="row" v-for="(rows, rowIndex) in matrix">
+                <div class="side"
+                     v-for="(sides, sideIndex) in matrix"
+                     v-bind:class="{'side-1': sideIndex === 0, 'side-2': sideIndex === 1, 'side-3': sideIndex === 2, 'side-4': sideIndex === 3, 'side-5': sideIndex === 4, 'side-6': sideIndex === 5}">
+                    <div class="row"
+                         v-for="(rows, rowIndex) in sides">
                         <div class="cell"
                              v-for="(cell, cellIndex) in rows"
-                             v-bind:class="{'inverted': matrix[rowIndex][cellIndex] === 1}"
-                             v-on:click.prevent="touch(rowIndex,cellIndex)"></div>
-                    </div>
-                </div>
-                <div class="side side-2">
-                    <div class="row" v-for="(rows, rowIndex) in matrix">
-                        <div class="cell"
-                             v-for="(cell, cellIndex) in rows"
-                             v-bind:class="{'inverted': matrix[rowIndex][cellIndex] === 1}"
-                             v-on:click.prevent="touch(rowIndex,cellIndex)"></div>
-                    </div>
-                </div>
-                <div class="side side-3">
-                    <div class="row" v-for="(rows, rowIndex) in matrix">
-                        <div class="cell"
-                             v-for="(cell, cellIndex) in rows"
-                             v-bind:class="{'inverted': matrix[rowIndex][cellIndex] === 1}"
-                             v-on:click.prevent="touch(rowIndex,cellIndex)"></div>
-                    </div>
-                </div>
-                <div class="side side-4">
-                    <div class="row" v-for="(rows, rowIndex) in matrix">
-                        <div class="cell"
-                             v-for="(cell, cellIndex) in rows"
-                             v-bind:class="{'inverted': matrix[rowIndex][cellIndex] === 1}"
-                             v-on:click.self.prevent="touch(rowIndex,cellIndex)"></div>
-                    </div>
-                </div>
-                <div class="side side-5">
-                    <div class="row" v-for="(rows, rowIndex) in matrix">
-                        <div class="cell"
-                             v-for="(cell, cellIndex) in rows"
-                             v-bind:class="{'inverted': matrix[rowIndex][cellIndex] === 1}"
-                             v-on:click.prevent="touch(rowIndex,cellIndex)"></div>
-                    </div>
-                </div>
-                <div class="side side-6">
-                    <div class="row" v-for="(rows, rowIndex) in matrix">
-                        <div class="cell"
-                             v-for="(cell, cellIndex) in rows"
-                             v-bind:class="{'inverted': matrix[rowIndex][cellIndex] === 1}"
-                             v-on:click.prevent="touch(rowIndex,cellIndex)"></div>
+                             v-bind:class="{'inverted': matrix[sideIndex][rowIndex][cellIndex] === 1}"
+                             v-on:click.prevent="touch([sideIndex, rowIndex, cellIndex])">
+                        </div>
                     </div>
                 </div>
             </div>
-            <!--<div class="row" v-for="(rows, rowIndex) in matrix">
-                <div class="cell"
-                     v-for="(cell, cellIndex) in rows"
-                     v-bind:class="{'inverted': matrix[rowIndex][cellIndex] === 1}"
-                     v-on:click.prevent="touch(rowIndex,cellIndex)"></div>
-            </div>-->
         </div>
-        <!--<span class="message">
-            YOU<br />
-            WIN!
-        </span>-->
         <div class="controls">
             <button class="btn btn-decrease"
                     v-on:click="decreaseRank()">
